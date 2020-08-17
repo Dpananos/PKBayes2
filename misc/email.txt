@@ -1,0 +1,19 @@
+Hi Demetri,
+
+As discussed last week, I have prepared a data file containing PM clinic patients (Caucasian only) with atrial fibrillation prescribed apixaban (2.5 or 5mg twice daily) with a single drug level measurement as well as other variables that may be helpful for modelling drug concentration.
+
+A new patient ID has been associated.
+
+Patients were excluded (n=131) for the following reasons: Unknown or other than Caucasian ancestry; Other indication; Non-standard apixaban dose; Apixaban concentration below LOD; Hours post dose prior to Tmax (2hr); Hours post dose > 12 hr.
+
+I divided the remaining 401 patients in 2 cohorts based on their clinic date.
+
+The first cohort (n=201) contains patients seen between Sep 27 2013 to Jun 10 2016. The attached file contains data for this cohort, with the goal to create the model.
+
+The second cohort (n=200) contains patients seen between Jun 14 2016 to Aug 2 2018. Data for these patients will be provided at a later date with the goal to evaluate the initial model.
+
+The attached file is password protected (encrypted). I will share the password in a separate e-mail with you. I have not included Dan here as he only has a uwo e-mail which is less secure.
+
+Let me know if you have any questions.
+
+Thanks, Ute

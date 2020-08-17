@@ -1,0 +1,176 @@
+---
+title: "Stan Model Development"
+
+---
+
+
+```{r}
+library(cmdstanr)
+library(tidyverse)
+library(tidybayes)  
+library(posterior)
+library(deSolve)
+library(fitdistrplus)
+conflicted::conflict_prefer('select', 'dplyr')
+conflicted::conflict_prefer('filter', 'dplyr')
+
+d<-read_csv('data/combined_data.csv') %>% 
+   filter(study=='old') %>% 
+   mutate(yobs=yobs/1000, i = seq_along(subjectids))
+
+subjects<- distinct(d, subjectids, .keep_all = T) %>% 
+           mutate(i=subjectids)
+
+model_data <- d %>% 
+  select(subjectids, time, yobs, D) %>% 
+  compose_data(.n_name = n_prefix("N"))
+
+model_data$n_subjects <- n_distinct(d$subjectids)
+```
+
+```{r, add_alpha_hyperprior}
+model <- cmdstan_model(stan_file = 'model_dev_1.stan')
+
+fit <- model$sample(data=model_data, 
+                    parallel_chains=4, 
+                    chains=12)
+
+draws <- fit$draws()
+
+```
+
+```{r}
+draws %>% 
+  as_draws_df() %>% 
+  spread_draws(z_cl[i]) %>% 
+  mean_qi %>% 
+  left_join(subjects) %>% 
+  ggplot(aes(creatinine, z_cl, ymin = .lower, ymax = .upper, color = sex))+
+  geom_pointrange()+
+  geom_smooth(method = 'lm')
+```
+
+```{r, add_wt_sex_on_cl}
+model_data <- d %>% 
+  select(subjectids, time, yobs, D) %>% 
+  compose_data(.n_name = n_prefix("N"))
+
+model_data$n_subjects <- n_distinct(d$subjectids)
+model_data$sex<- if_else(subjects$sex=='male',1,0)
+model_data$weight<- as.numeric(scale(subjects$weight))
+model_data$creatinine<- as.numeric(scale(subjects$creatinine))
+model_data$D<- subjects$D
+
+model <- cmdstan_model(stan_file = 'model_dev_2.stan')
+
+fit <- model$sample(data=model_data, parallel_chains=4, chains=12)
+
+draws = as_draws_df(fit$draws())
+
+draws %>% 
+  gather_draws(Crepeat[i,j]) %>% 
+  filter(i==8) %>% 
+  pull(.value)->x
+  
+fitdist(x, 'lnorm') %>% plot
+
+
+hist(rlnorm(10000, -4.6, 0.25))
+  
+```
+
+
+```{r, new_data_no_IC}
+
+d<-read_csv('data/combined_data.csv')
+
+old = filter(d, study=='old')
+
+old_subjects<- distinct(old, subjectids, .keep_all = T)
+
+
+new = filter(d, study=='new') %>% 
+  mutate(subjectids =  factor(subjectids - min(subjectids)+1),
+         weight = (weight - mean(old_subjects$weight))/sd(old_subjects$weight),
+         age = (age - mean(old_subjects$age))/sd(old_subjects$age),
+         creatinine  = (creatinine  - mean(old_subjects$creatinine ))/sd(old_subjects$creatinine ),
+         sex = if_else(sex=='male', 1, 0),
+         yobs = yobs/1000
+         ) %>% 
+  select(-study) 
+
+model_data = compose_data(new, .n_name=n_prefix('N'))
+
+model_data
+model = cmdstan_model(stan_file='model_dev_3.stan')
+
+
+fit = model$sample(model_data, chains = 12, parallel_chains = 4, adapt_delta = 0.8)
+
+fit$cmdstan_diagnose()
+
+fit$draws() %>% 
+  as_draws_df() %>% 
+  spread_draws(z_cl[i]) %>% 
+  mean_qi %>% 
+  mutate(i = factor(i)) %>% 
+  left_join(new, by = c('i'='subjectids')) %>% 
+  ggplot(aes(creatinine, z_cl, color = factor(sex)))+
+  geom_point()+
+  geom_smooth(method = 'lm')
+
+
+fit$draws('beta_age') %>% hist
+```
+
+```{r, new_data_wth_IC}
+d<-read_csv('data/combined_data.csv')
+
+old = filter(d, study=='old')
+
+old_subjects<- distinct(old, subjectids, .keep_all = T)
+
+
+new = filter(d, study=='new') %>% 
+  mutate(subjectids =  factor(subjectids - min(subjectids)+1),
+         weight = (weight - mean(old_subjects$weight))/sd(old_subjects$weight),
+         age = (age - mean(old_subjects$age))/sd(old_subjects$age),
+         creatinine  = (creatinine  - mean(old_subjects$creatinine ))/sd(old_subjects$creatinine ),
+         sex = if_else(sex=='male', 1, 0),
+         yobs = yobs*0.001
+         ) %>% 
+  select(-study) 
+
+model_data = compose_data(new, .n_name=n_prefix('N'))
+
+model_data
+model = cmdstan_model(stan_file='model_dev_4.stan')
+
+
+fit = model$sample(model_data, chains = 4, parallel_chains = 2, adapt_delta = 0.8)
+
+fit$cmdstan_diagnose()
+
+fit$draws('C') %>% 
+  as_draws_df() %>% 
+  spread_draws(C[i]) %>% 
+  mean_qi %>% 
+  mutate(i = factor(i)) %>% 
+  left_join(new, by = c('i'='subjectids')) %>% 
+  ggplot(aes(yobs, C))+
+  geom_pointrange(aes(ymin = .lower, ymax = .upper))+
+  geom_abline()+
+  labs(x='observed', y='predicted')
+
+rfit = rstan::read_stan_csv(fit$output_files())
+
+fit$draws() %>% 
+  as_draws_df() %>% 
+  spread_draws(alpha[i]) %>% 
+  mean_qi %>% 
+  mutate(i = factor(i)) %>% 
+  left_join(new, by = c('i'='subjectids')) %>% 
+  ggplot(aes(weight, qlogis(alpha), color = sex))+
+  geom_point()
+```
+

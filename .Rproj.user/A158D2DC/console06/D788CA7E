@@ -1,0 +1,142 @@
+
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+For more details, please visit https://support.apple.com/kb/HT208050.
+]0;~/Documents/PhD Code/PKBayes2[?1034h(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2[m$ ls
+Book2.xlsx         apixaban2020.xlsx  training_data.csv
+PKBayes2.Rproj     email.txt
+]0;~/Documents/PhD Code/PKBayes2(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2[m$ cp ../PJK[K[KKBayes/models/[K/ moel [A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K[Kode ls
+cp: ../PKBayes/models/ is a directory (not copied).
+]0;~/Documents/PhD Code/PKBayes2(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2[m$ cp ../PKBayes/models/ modells[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C ../PKBayes/models/ models[A(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2[m$ [C[C[C- ../PKBayes/models/ models[A(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2[m$ [C[C[C[CR ../PKBayes/models/ models[A(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2[m$ [C[C[C[C[C
+
+]0;~/Documents/PhD Code/PKBayes2(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2[m$ [K(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2[m$ [K(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2[m$ clear
+[3J[H[2J]0;~/Documents/PhD Code/PKBayes2(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2[m$ mkdir R
+]0;~/Documents/PhD Code/PKBayes2(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2[m$ mkdir aal[K[Knalysis
+
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+For more details, please visit https://support.apple.com/kb/HT208050.
+
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+For more details, please visit https://support.apple.com/kb/HT208050.
+]0;~/Documents/PhD Code/PKBayes2[?1034h(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2[m$ ls
+Book2.xlsx         [1m[34manalysis[39;49m[0m/          email.txt          [1m[34mmodels[39;49m[0m/
+PKBayes2.Rproj     apixaban2020.xlsx  model_fitting.R    training_data.csv
+]0;~/Documents/PhD Code/PKBayes2(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2[m$ ls
+Book2.xlsx         [1m[34manalysis[39;49m[0m/          email.txt          [1m[34mmodels[39;49m[0m/
+PKBayes2.Rproj     apixaban2020.xlsx  model_fitting.R    training_data.csv
+]0;~/Documents/PhD Code/PKBayes2(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2[m$ open .
+
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+For more details, please visit https://support.apple.com/kb/HT208050.
+]0;~/Documents/PhD Code/PKBayes2[?1034h(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2[m$ [K(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2[m$ ope[K[K[Km [Kv email.txt misc
+]0;~/Documents/PhD Code/PKBayes2(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2[m$ mc [K[Kv D[Kdata/Book2.xlsx  misc
+]0;~/Documents/PhD Code/PKBayes2(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2[m$ mv a[Kdata/apixaban2020.xlsx misc
+]0;~/Documents/PhD Code/PKBayes2(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2[m$ cm models/model.stan models/[C[1P[1@p[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cupdated_model.stan
+
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+For more details, please visit https://support.apple.com/kb/HT208050.
+]0;~/Documents/PhD Code/PKBayes2[?1034h(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2[m$ clear
+[H[2J]0;~/Documents/PhD Code/PKBayes2(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2[m$ ls
+PKBayes2.Rproj  [1m[34manalysis[39;49m[0m/       [1m[34mdata[39;49m[0m/           [1m[34mmisc[39;49m[0m/           [1m[34mmodels[39;49m[0m/
+]0;~/Documents/PhD Code/PKBayes2(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2[m$ cd models
+]0;~/Documents/PhD Code/PKBayes2/models(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2/models[m$ cp updated_modeel.stan regression_updated_model_[K.stan
+]0;~/Documents/PhD Code/PKBayes2/models(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2/models[m$ open upd[K[K[Kregressionn_updated_model.stan 
+
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+For more details, please visit https://support.apple.com/kb/HT208050.
+]0;~/Documents/PhD Code/PKBayes2/models[?1034h(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2/models[m$ ls
+[1m[32mmodel[39;49m[0m*                         [1m[32mprior_predictive_check[39;49m[0m*        [1m[32mregression_updated_model[39;49m[0m*      [1m[32mupdated_model[39;49m[0m*
+model.stan                     prior_predictive_check.stan    regression_updated_model.stan  updated_model.stan
+]0;~/Documents/PhD Code/PKBayes2/models(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2/models[m$ cd ..
+]0;~/Documents/PhD Code/PKBayes2(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2[m$ ls
+PKBayes2.Rproj  [1m[34manalysis[39;49m[0m/       [1m[34mdata[39;49m[0m/           [1m[34mmisc[39;49m[0m/           [1m[34mmodels[39;49m[0m/         test.stan
+]0;~/Documents/PhD Code/PKBayes2(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2[m$ touch notes.text[K[K[Kxt
+
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+For more details, please visit https://support.apple.com/kb/HT208050.
+]0;~/Documents/PhD Code/PKBayes2[?1034h(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2[m$ cd M[Km
+bash: cd: m: No such file or directory
+]0;~/Documents/PhD Code/PKBayes2(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2[m$ c mo[K[K[Kd models/
+]0;~/Documents/PhD Code/PKBayes2/models(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2/models[m$ ls
+[1m[32mmodel[39;49m[0m*                       model_with_regression.stan   prior_predictive_check.stan  [1m[32mupdated_model[39;49m[0m*
+model.stan                   [1m[32mprior_predictive_check[39;49m[0m*      [1m[32mregression_updated_model[39;49m[0m*    updated_model.stan
+]0;~/Documents/PhD Code/PKBayes2/models(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2/models[m$ cp model_with_regression.stan updated_model_with_regression.stan
+clea
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+For more details, please visit https://support.apple.com/kb/HT208050.
+]0;~/Documents/PhD Code/PKBayes2/models[?1034h(base) [36mdemetri[m@[32mDemetris-MacBook-Pro:[33;1m~/Documents/PhD Codde/PKBayes2/models[m$ clea
+bash: clea: command not found
+]0;~/Documents/PhD Code/PKBayes2/models(base) [36mdemetri[m@[32mDemetris-MacBook-Pro:[33;1m~/Documents/PhD Codde/PKBayes2/models[m$ clear
+[H[2J]0;~/Documents/PhD Code/PKBayes2/models(base) [36mdemetri[m@[32mDemetris-MacBook-Pro:[33;1m~/Documents/PhD Codde/PKBayes2/models[m$ which git
+/usr/bin/git
+]0;~/Documents/PhD Code/PKBayes2/models(base) [36mdemetri[m@[32mDemetris-MacBook-Pro:[33;1m~/Documents/PhD Codde/PKBayes2/models[m$ git status
+fatal: not a git repository (or any of the parent directories): .git
+]0;~/Documents/PhD Code/PKBayes2/models(base) [36mdemetri[m@[32mDemetris-MacBook-Pro:[33;1m~/Documents/PhD Codde/PKBayes2/models[m$ [K[A(base) [36mdemetri[m@[32mDemetris-MacBook-Pro:[33;1m~/Documents/PhD Code/PKBayes2/models[m$ cd  [A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K[Kcd  ..
+]0;~/Documents/PhD Code/PKBayes2(base) [36mdemetri[m@[32mDemetris-MacBook-Pro:[33;1m~/Documents/PhD Code/PKBayes2[m$ ls
+PKBayes2.Rproj              model_dev_2.stan
+[1m[34manalysis[39;49m[0m/                   [1m[32mmodel_dev_3[39;49m[0m*
+[1m[34mdata[39;49m[0m/                       model_dev_3.stan
+[1m[34mmisc[39;49m[0m/                       [1m[32mmodel_dev_4[39;49m[0m*
+[1m[32mmodel_dev_1[39;49m[0m*                model_dev_4.stan
+model_dev_1.stan            [1m[34mmodels[39;49m[0m/
+[1m[32mmodel_dev_2[39;49m[0m*                stan_model_development.Rmd
+]0;~/Documents/PhD Code/PKBayes2(base) [36mdemetri[m@[32mDemetris-MacBook-Pro:[33;1m~/Documents/PhD Code/PKBayes2[m$ whcih [K[K[K[K[K[Kgit status [A
+fatal: not a git repository (or any of the parent directories): .git
+]0;~/Documents/PhD Code/PKBayes2(base) [36mdemetri[m@[32mDemetris-MacBook-Pro:[33;1m~/Documents/PhD Code/PKBayes2[m$ cd ..
+]0;~/Documents/PhD Code(base) [36mdemetri[m@[32mDemetris-MacBook-Pro:[33;1m~/Documents/PhD Code[m$ git status
+fatal: not a git repository (or any of the parent directories): .git
+]0;~/Documents/PhD Code(base) [36mdemetri[m@[32mDemetris-MacBook-Pro:[33;1m~/Documents/PhD Code[m$ cd PKBayes
+]0;~/Documents/PhD Code/PKBayes(base) [36mdemetri[m@[32mDemetris-MacBook-Pro:[33;1m~/Documents/PhD Code/PKBayes[m$ git init
+Reinitialized existing Git repository in /Users/demetri/Documents/PhD Code/PKBayes/.git/
+]0;~/Documents/PhD Code/PKBayes(base) [36mdemetri[m@[32mDemetris-MacBook-Pro:[33;1m~/Documents/PhD Code/PKBayes[m$ git status
+On branch master
+Your branch is up to date with 'origin/master'.
+
+nothing to commit, working tree clean
+]0;~/Documents/PhD Code/PKBayes(base) [36mdemetri[m@[32mDemetris-MacBook-Pro:[33;1m~/Documents/PhD Code/PKBayes[m$ git log
+[?1h=[33mcommit 628b145ac3ae8355cb26ff86068aba2bb80d3fa2[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31morigin/maste[m [33m[m[33m[m[1;36m[m[1;32m[m[33m[m[1;31mr[m[33m, [m[1;31morigin/HEAD[m[33m)[m[m
+Author: Demetri <dpananos@gmail.com>[m
+Date:   Sun Aug 16 18:35:34 2020 -0400[m
+[m
+    add cmdstanr branch[m
+[m
+[33mcommit 53b45a8c1e29b965cca5e1b04eaba579bd3432fd[m[m
+Author: Demetri <dpananos@gmail.com>[m
+Date:   Tue Jul 21 19:22:34 2020 -0400[m
+[m
+    fixed some typos[m
+[m
+[33mcommit 840390536effe7b17c476c010c0438f3c0fadc21[m[m
+Author: Dan Lizotte <dlizotte@uwo.ca>[m
+Date:   Mon Jul 6 20:28:25 2020 -0400[m
+[m
+    Change Epi and Biostat to Epi & Biostat for reasons[m
+[m
+[33mcommit c14a81b3a75ce48247055bd9b1c6cd598084958e[m[m
+Author: Dan Lizotte <dlizotte@uwo.ca>[m
+Date:   Mon Jul 6 20:23:04 2020 -0400[m
+[m
+    Fixed references, fixed acknowledgements to conform to ORF standard.[m
+[m
+[33mcommit 93e498b4ee606e4cc6a6b7ead117bb522cdb4613[m[m
+Author: Demetri <dpananos@gmail.com>[m
+Date:   Fri Jun 26 18:58:59 2020 -0400[m
+[m
+    ackowledgement + HMC rationale[m
+[m
+:[K[K[?1l>
+[1]+  Stopped                 git log
+]0;~/Documents/PhD Code/PKBayes(base) [36mdemetri[m@[32mDemetris-MacBook-Pro:[33;1m~/Documents/PhD Code/PKBayes[m$ cd ..
+]0;~/Documents/PhD Code(base) [36mdemetri[m@[32mDemetris-MacBook-Pro:[33;1m~/Documents/PhD Code[m$ cd PJ[KKBayesB[K2
+]0;~/Documents/PhD Code/PKBayes2(base) [36mdemetri[m@[32mDemetris-MacBook-Pro:[33;1m~/Documents/PhD Code/PKBayes2[m$ git init
+Initialized empty Git repository in /Users/demetri/Documents/PhD Code/PKBayes2/.git/
+]0;~/Documents/PhD Code/PKBayes2(base) [36mdemetri[m@[32mDemetris-MacBook-Pro:[33;1m~/Documents/PhD Code/PKBayes2[m$ git add .
