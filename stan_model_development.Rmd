@@ -158,7 +158,7 @@ fit$draws('C') %>%
   mutate(i = factor(i)) %>% 
   left_join(new, by = c('i'='subjectids')) %>% 
   ggplot(aes(yobs, C))+
-  geom_pointrange(aes(ymin = .lower, ymax = .upper))+
+  geom_point(aes(ymin = .lower, ymax = .upper))+
   geom_abline()+
   labs(x='observed', y='predicted')
 
