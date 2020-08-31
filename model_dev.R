@@ -125,8 +125,27 @@ fit$draws('C') %>%
   mutate(i = factor(i)) %>% 
   left_join(new, by = c('i'='subjectids')) %>% 
   ggplot(aes(yobs, C))+
-  geom_point(aes(ymin = .lower, ymax = .upper))+
+  geom_pointrange(aes(ymin = .lower, ymax = .upper))+
   geom_abline()+
   labs(x='observed', y='predicted')
 
+# ---- New Model, only rfx on clearance ----
 
+model = cmdstan_model(stan_file='model_dev_4.stan')
+fit = model$sample(model_data, chains = 4, parallel_chains = num_cores)
+
+fit$draws('C') %>% 
+  as_draws_df() %>% 
+  spread_draws(C[i]) %>% 
+  mean_qi %>% 
+  mutate(i = factor(i)) %>% 
+  left_join(new, by = c('i'='subjectids')) %>% 
+  ggplot(aes(yobs, C))+
+  geom_pointrange(aes(ymin = .lower, ymax = .upper))+
+  geom_abline()+
+  labs(x='observed', y='predicted')
+
+draws = fit$draws() %>% as_draws_df()
+
+
+plot_rfx_grid(draws, t, '')
