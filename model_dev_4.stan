@@ -7,8 +7,14 @@ functions {
 }
 data{
   int N; //Total number of observations
+  int N_test;
   int subjectids[N]; //Subject idendification number as an integer.  Mine go from 1 - 36
+  
   int N_subjectids; //How many unique subjects do I have?
+  
+  int N_test_subjectids_test;
+  int subjectids_test[N_test];
+  
   vector[N] time; //time at which subjects were observed?  Length N
   real yobs[N]; //Observed concentraitons
   
@@ -17,6 +23,13 @@ data{
   vector[N_subjectids] age;
   vector[N_subjectids] creatinine;
   vector[N_subjectids] D;
+  
+  vector[N_test] test_time;
+  vector[N_test_subjectids_test] sex_test;
+  vector[N_test_subjectids_test] weight_test;
+  vector[N_test_subjectids_test] age_test;
+  vector[N_test_subjectids_test] creatinine_test;
+  vector[N_test_subjectids_test] D_test;
 }
 parameters{
   
@@ -79,8 +92,19 @@ model{
 generated quantities{
   vector[N] posterior_predict;
   
+  vector[N_test_subjectids_test] Cl_test = exp(mu_cl + beta_cl_sex*sex_test + beta_cl_weight*weight_test + beta_cl_creatinine*creatinine_test);
+  vector<lower=0>[N_test_subjectids_test] t_test = exp(mu_tmax + beta_t_weight*weight_test);
+  vector<lower=0>[N_test_subjectids_test] ka_test = log(alpha)./ (t_test * (alpha-1));
+  vector<lower=0>[N_test_subjectids_test] ke_test = alpha * log(alpha)./ (t_test * (alpha-1));
+  vector<lower=0>[N_test] delayed_test_time = test_time - 0.5*phi;
+  
+  vector[N_test] C_test = (0.5*D_test[subjectids_test] ./ Cl_test[subjectids_test]) .* (ke_test[subjectids_test] .* ka_test[subjectids_test]) ./ (ke_test[subjectids_test] - ka_test[subjectids_test]) .* (exp(-ka_test[subjectids_test] .* delayed_test_time) -exp(-ke_test[subjectids_test] .* delayed_test_time));
+  
+
+  
   for (i in 1:N){
     posterior_predict[i] = lognormal_rng(log(C[i]),sigma);
   }
+  
 
 }

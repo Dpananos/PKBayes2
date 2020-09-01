@@ -55,6 +55,7 @@ fit <- model$sample(data=model_1_data,
                     parallel_chains=num_cores, 
                     chains=num_cores)
 
+
 draws <- as_draws_df(fit$draws())
 
 plot_rfx_grid(draws, z_cl, 'Clearance')
@@ -131,21 +132,47 @@ fit$draws('C') %>%
 
 # ---- New Model, only rfx on clearance ----
 
+train_ix = sample(1:nrow(new), replace = F, size = 50)
+
+train = new[train_ix, ] %>% mutate(subjectids = factor(seq_along(subjectids)))
+model_train = compose_data(train, .n_name=n_prefix('N'))
+
+
+test = new[-train_ix, ] %>% 
+       mutate(subjectids = as.factor(seq_along(subjectids))) %>% 
+       rename(
+         subjectids_test = subjectids,
+         sex_test = sex,
+         weight_test = weight,
+         age_test = age,
+         creatinine_test = creatinine,
+         D_test = D,
+         test_time = time
+       )
+model_test = compose_data(test, .n_name=n_prefix('N_test'))
+
+
 model = cmdstan_model(stan_file='model_dev_4.stan')
-fit = model$sample(model_data, chains = 4, parallel_chains = num_cores)
+fit = model$sample(c(model_train, model_test), chains = 4, parallel_chains = num_cores)
 
 fit$draws('C') %>% 
   as_draws_df() %>% 
   spread_draws(C[i]) %>% 
   mean_qi %>% 
   mutate(i = factor(i)) %>% 
-  left_join(new, by = c('i'='subjectids')) %>% 
+  right_join(train, by = c('i'='subjectids')) %>% 
   ggplot(aes(yobs, C))+
   geom_pointrange(aes(ymin = .lower, ymax = .upper))+
   geom_abline()+
   labs(x='observed', y='predicted')
 
-draws = fit$draws() %>% as_draws_df()
 
+fit$draws('C_test') %>% 
+  as_draws_df() %>% 
+  spread_draws(C_test[i]) %>% 
+  mean_qi %>% 
+  bind_cols(test) %>% 
+  ggplot(aes(yobs, C_test))+
+  geom_point()+
+  geom_abline()
 
-plot_rfx_grid(draws, t, '')

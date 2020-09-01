@@ -147,4 +147,71 @@ The default interactive shell is now zsh.
 To update your account to use zsh, please run `chsh -s /bin/zsh`.
 For more details, please visit https://support.apple.com/kb/HT208050.
 ]0;~/Documents/PhD Code/PKBayes2[?1034h(base) [36mdemetri[m@[32mDemetris-MacBook-Pro:[33;1m~/Documents/PhD Code/PPKBayes2[m$ open .
-]0;~/Documents/PhD Code/PKBayes2(base) [36mdemetri[m@[32mDemetris-MacBook-Pro:[33;1m~/Documents/PhD Code/PPKBayes2[m$ [K[A(base) [36mdemetri[m@[32mDemetris-MacBook-Pro:[33;1m~/Documents/PhD Code/PKBayes2[m$ [K(base) [36mdemetri[m@[32mDemetris-MacBook-Pro:[33;1m~/Documents/PhD Code/PKBayes2[m$ 
+gi  t log
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+For more details, please visit https://support.apple.com/kb/HT208050.
+]0;~/Documents/PhD Code/PKBayes2[?1034h(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2[m$ git log
+[?1h=[33mcommit cbe30a9718835b157a5c1f46fd1e59edac44ff1b[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m[m
+Author: Demetri <dpananos@gmail.com>[m
+Date:   Fri Aug 21 17:23:07 2020 -0400[m
+:[K...skipping...
+[33mcommit cbe30a9718835b157a5c1f46fd1e59edac44ff1b[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m[m
+Author: Demetri <dpananos@gmail.com>[m
+Date:   Fri Aug 21 17:23:07 2020 -0400[m
+[m
+    model development with new data[m
+[m
+[33mcommit ddc3bd8f00da3248ca405549428cc59101c5f4d7[m[m
+Author: Demetri <dpananos@gmail.com>[m
+Date:   Sun Aug 16 22:14:24 2020 -0400[m
+[m
+    Initial commit[m
+[1m~[0m
+[1m~[0m
+[1m~[0m
+[K[?1l>]0;~/Documents/PhD Code/PKBayes2(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2[m$ 
+]0;~/Documents/PhD Code/PKBayes2(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2[m$ 
+]0;~/Documents/PhD Code/PKBayes2(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2[m$ 
+]0;~/Documents/PhD Code/PKBayes2(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2[m$ 
+]0;~/Documents/PhD Code/PKBayes2(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2[m$ cl[K[Kclear
+[H[2J]0;~/Documents/PhD Code/PKBayes2(base) [36mdemetri[m@[32mDemetris-MBP:[33;1m~/Documents/PhD Code/PKBayes2[m$ git log
+[?1h=[33mcommit 6f2d2b524ec31c110c5d6dd9424be3ee4efb49fd[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m[m
+Author: Demetri <dpananos@gmail.com>[m
+Date:   Mon Aug 31 16:17:59 2020 -0400[m
+[m
+    a much simpler model for new data[m
+[m
+[33mcommit 1ed91a50d93f5f814af370316f6e41a841b8af1d[m[m
+Author: Demetri <dpananos@gmail.com>[m
+Date:   Sun Aug 30 18:05:11 2020 -0400[m
+[m
+    unreasonably good results[m
+[m
+[33mcommit cbe30a9718835b157a5c1f46fd1e59edac44ff1b[m[m
+Author: Demetri <dpananos@gmail.com>[m
+:[K[KDate:   Fri Aug 21 17:23:07 2020 -0400[m
+:[K[K[m
+:[K[K    model development with new data[m
+:[K[K[m
+:[K[K[33mcommit ddc3bd8f00da3248ca405549428cc59101c5f4d7[m[m
+:[K[KAuthor: Demetri <dpananos@gmail.com>[m
+:[K[K:[K[K:[K[KDate:   Sun Aug 16 22:14:24 2020 -0400[m
+:[K[K:[K[K...skipping...
+Author: Demetri <dpananos@gmail.com>[m
+Date:   Sun Aug 30 18:05:11 2020 -0400[m
+[m
+    unreasonably good results[m
+[m
+[33mcommit cbe30a9718835b157a5c1f46fd1e59edac44ff1b[m[m
+Author: Demetri <dpananos@gmail.com>[m
+Date:   Fri Aug 21 17:23:07 2020 -0400[m
+[m
+    model development with new data[m
+[m
+[33mcommit ddc3bd8f00da3248ca405549428cc59101c5f4d7[m[m
+Author: Demetri <dpananos@gmail.com>[m
+Date:   Sun Aug 16 22:14:24 2020 -0400[m
+:[K[K [KESCESC[KESCESC[K:[K[K [KESCESC[KESCESC[K:[K[K [KESCESC[KESCESC[K:[K[K[m
+:[K[K:[K11[K    Initial commit[m
+:[K

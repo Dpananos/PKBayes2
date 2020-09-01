@@ -66,16 +66,6 @@ model <- cmdstan_model(stan_file = 'model_dev_2.stan')
 fit <- model$sample(data=model_data, parallel_chains=4, chains=12)
 
 draws = as_draws_df(fit$draws())
-
-draws %>% 
-  gather_draws(Crepeat[i,j]) %>% 
-  filter(i==8) %>% 
-  pull(.value)->x
-  
-fitdist(x, 'lnorm') %>% plot
-
-
-hist(rlnorm(10000, -4.6, 0.25))
   
 ```
 
@@ -119,8 +109,16 @@ fit$draws() %>%
   geom_point()+
   geom_smooth(method = 'lm')
 
+fit$draws() %>% 
+  as_draws_df() %>%
+  spread_draws(C[i]) %>% 
+  mean_qi %>% 
+  mutate(i = factor(i)) %>% 
+  left_join(new, by = c('i' = 'subjectids')) %>% 
+  ggplot(aes(yobs, C))+
+  geom_point()+
+  geom_abline()
 
-fit$draws('beta_age') %>% hist
 ```
 
 ```{r, new_data_wth_IC}
