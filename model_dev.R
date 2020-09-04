@@ -17,7 +17,7 @@ plot_random_effects<-function(draws, covar, random_effect){
     spread_draws((!!y)[i]) %>% 
     mean_qi %>% 
     left_join(subjects) %>% 
-    ggplot(aes(!!x, !!y, color = sex, ymin = .lower, ymax = .upper))+
+    ggplot(aes(!!x, !!y, color = factor(sex), ymin = .lower, ymax = .upper))+
     geom_pointrange()+
     geom_smooth(method = 'lm')
 }
@@ -64,7 +64,8 @@ plot_rfx_grid(draws, z_cl, 'Clearance')
 
 model_2_data <- combined_data %>% 
   select(subjectids, time, yobs, D) %>% 
-  compose_data(.n_name = n_prefix("N"))
+  mutate(subjectids = factor(subjectids)) %>% 
+  compose_data(.n_name = n_prefix("n"))
 
 model_2_data$n_subjects <- n_distinct(combined_data$subjectids)
 model_2_data$sex<- if_else(subjects$sex=='male',1,0)

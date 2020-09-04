@@ -1,37 +1,37 @@
 
 data{
-  int N; //Total number of observations
-  int subjectids[N]; //Subject idendification number as an integer.  Mine go from 1 - 36
-  int n_subjects; //How many unique subjects do I have?
-  vector[N] time; //time at which subjects were observed?  Length N
-  real yobs[N]; //Observed concentraitons
+  int n; //Total number of observations
+  int subjectids[n]; //Subject idendification number as an integer.  Mine go from 1 - 36
+  int n_subjectids; //How many unique subjects do I have?
+  vector[n] time; //time at which subjects were observed?  Length N
+  real yobs[n]; //Observed concentraitons
   
-  vector[n_subjects] sex;
-  vector[n_subjects] weight;
-  vector[n_subjects] creatinine;
-  vector[n_subjects] D;
+  vector[n_subjectids] sex;
+  vector[n_subjectids] weight;
+  vector[n_subjectids] creatinine;
+  vector[n_subjectids] D;
 }
 parameters{
   
   real<lower=0>  mu_cl;
   real<lower=0> s_cl;
-  vector[n_subjects] z_cl;
+  vector[n_subjectids] z_cl;
   
   real<lower=0> mu_tmax;
   real<lower=0> s_t;
-  vector[n_subjects] z_t;
+  vector[n_subjectids] z_t;
   
   
   
   real<lower=0, upper=1> phi;
   real<lower=0, upper=1> kappa;
-  vector<lower=0, upper=1>[n_subjects] delays;
+  vector<lower=0, upper=1>[n_subjectids] delays;
   
   real<lower=0> sigma;
   
   real mu_alpha;
   real<lower=0> s_alpha;
-  vector[n_subjects] z_alpha;
+  vector[n_subjectids] z_alpha;
   
   real beta_cl_sex;
   real beta_cl_weight;
@@ -41,14 +41,14 @@ parameters{
   
 }
 transformed parameters{
-  vector<lower=0>[n_subjects] Cl = exp(mu_cl + z_cl*s_cl + beta_cl_sex*sex + beta_cl_weight*weight + beta_cl_creatinine*creatinine);
-  vector<lower=0>[n_subjects] t = exp(mu_tmax + z_t*s_t + beta_t_weight*weight);
-  vector<lower=0, upper=1>[n_subjects] alpha = inv_logit(mu_alpha + s_alpha*z_alpha);
-  vector<lower=0>[n_subjects] ka = log(alpha)./(t .* (alpha-1));
-  vector<lower=0>[n_subjects] ke = alpha .* log(alpha)./(t .* (alpha-1));
-  vector<lower=0>[N] delayed_time = time - 0.5*delays[subjectids];
+  vector<lower=0>[n_subjectids] Cl = exp(mu_cl + z_cl*s_cl + beta_cl_sex*sex + beta_cl_weight*weight + beta_cl_creatinine*creatinine);
+  vector<lower=0>[n_subjectids] t = exp(mu_tmax + z_t*s_t + beta_t_weight*weight);
+  vector<lower=0, upper=1>[n_subjectids] alpha = inv_logit(mu_alpha + s_alpha*z_alpha);
+  vector<lower=0>[n_subjectids] ka = log(alpha)./(t .* (alpha-1));
+  vector<lower=0>[n_subjectids] ke = alpha .* log(alpha)./(t .* (alpha-1));
+  vector<lower=0>[n] delayed_time = time - 0.5*delays[subjectids];
   
-  vector<lower=0>[N] C = (0.5*D[subjectids] ./ Cl[subjectids]) .* (ke[subjectids] .* ka[subjectids]) ./ (ke[subjectids] - ka[subjectids]) .* (exp(-ka[subjectids] .* delayed_time) -exp(-ke[subjectids] .* delayed_time));
+  vector<lower=0>[n] C = (0.5*D[subjectids] ./ Cl[subjectids]) .* (ke[subjectids] .* ka[subjectids]) ./ (ke[subjectids] - ka[subjectids]) .* (exp(-ka[subjectids] .* delayed_time) -exp(-ke[subjectids] .* delayed_time));
 }
 model{
   mu_tmax ~ normal(log(3.3), 0.25);
