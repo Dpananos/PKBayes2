@@ -218,13 +218,11 @@ data{
 }
 parameters{
   
-  real<lower=0>  mu_cl;
+  real  mu_cl;
   
-  real<lower=0> mu_tmax;
+  real mu_tmax;
 
-  real<lower=0, upper=1> phi;
-  
-  real<lower=0> sigma;
+  real phi;
   
   real mu_alpha;
   
@@ -232,7 +230,6 @@ parameters{
   real beta_cl_weight;
   real beta_cl_creatinine;
   real beta_cl_age;
-  
   
 }
 
@@ -253,9 +250,50 @@ generated quantities{
 ```{r}
 pred_data<-scaled_test_subjects %>% 
   mutate(subjectids = factor(subjectids)) %>% 
-  compose_data()
 
 pred_model$generate_quantities(fit, data = pred_data)
+
+```
+```{r}
+mcmc_program <- write_stan_tempfile(
+  "data {
+    int<lower=0> N;
+    real y[N];
+  }
+  parameters {
+    real theta;
+    real<lower=0> sigma;
+    
+  }
+  model {
+    theta ~ std_normal();
+    sigma ~ cauchy(0,1);
+    y ~ normal(theta, sigma);
+  }"
+)
+mod_mcmc <- cmdstan_model(mcmc_program)
+
+fit = mod_mcmc$sample(list(N = 25, y = rnorm(25, 10, 2)))
+
+gq_program <- write_stan_tempfile(
+  "data {
+    int<lower=0> N;
+  }
+  parameters {
+    real theta;
+    
+  }
+  generated quantities{
+    vector[N] y;
+    for (i in 1:N){
+      y[i] = normal_rng(theta,1);
+    }
+  }
+"
+)
+gq_mcmc <- cmdstan_model(gq_program)
+
+gq_mcmc$generate_quantities(fit, data = list(N = 100))
 
 ```
 
