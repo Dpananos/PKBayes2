@@ -1,9 +1,0 @@
-"0","rfit %>% 
-  spread_draws(z_cl[i]) %>% 
-  mean_qi %>% 
-  mutate(i = factor(i)) %>% 
-  left_join(new, by = c('i'='subjectids'))
-"
-"2","Error in spread_draws_long_(draws, variable_names, dimension_names, regex = regex,  : 
-  No variables found matching spec: z_cl[i]
-"

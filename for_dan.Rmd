@@ -1,0 +1,261 @@
+---
+title: "R Notebook"
+---
+
+
+```{r}
+library(cmdstanr)
+library(posterior)
+library(tidybayes)
+library(tidyverse)
+library(patchwork)
+
+register_knitr_engine(override = FALSE)
+
+make_rfx_plot<-function(draws, x, y, color){
+  color_var = enquo(color)
+  var_y = enquo(y)
+  var_x = enquo(x)
+  draws %>% 
+  spread_draws((!!var_y)[i]) %>% 
+  mean_qi %>% 
+  left_join(train_subjects) %>% 
+  ggplot(aes(!!var_x, !!var_y))+
+  geom_point(aes(color = !!color_var))
+  
+}
+
+make_rfx_grid<-function(draws, y, color){
+  a = make_rfx_plot(draws, weight, !!enquo(y), !!enquo(color))
+  b = make_rfx_plot(draws, age, !!enquo(y), !!enquo(color))
+  d = make_rfx_plot(draws, creatinine, !!enquo(y), !!enquo(color))
+  
+  (a + b + d  + plot_layout(nrow = 2, ncol = 2))
+}
+```
+
+
+```{cmdstan, output.var = 'model'}
+functions{
+  // This is a helper function to compute the concentration curve given PK parameters
+    real conc_curve(real D, real t, real Cl, real ka, real ke){
+      real C = (0.5*D / Cl) * (ke * ka) / (ke - ka) * (exp(-ka * t) - exp(-ke * t));
+      
+      return C;
+  }
+}
+data{
+  int n; //Total number of observations
+  int subjectids[n]; //Subject idendification number as an integer.  Mine go from 1 - 36
+  int n_subjectids; //How many unique subjects do I have?
+  vector[n] time; //time at which subjects were observed?  Length N
+  real yobs[n]; //Observed concentraitons
+  
+  //Covars
+  vector[n] sex;
+  vector[n] weight;
+  vector[n] creatinine;
+  vector[n] age;
+  vector[n] D;
+
+
+}
+parameters{
+  
+  real  mu_cl;
+  real<lower=0> s_cl;                                                   
+  vector[n_subjectids] z_cl;
+  
+  real mu_tmax;
+  real<lower=0> s_t;
+  vector[n_subjectids] z_t;
+
+  real<lower=0, upper=1> phi;
+  real<lower=0, upper=1> kappa;
+  vector<lower=0, upper=1>[n_subjectids] delays;
+  
+  real<lower=0> sigma;
+  
+  real mu_alpha;
+  real<lower=0> s_alpha;
+  vector[n_subjectids] z_alpha;
+  
+  real beta_cl_sex;
+  real beta_cl_weight;
+  real beta_cl_creatinine;
+  real beta_cl_age;
+  
+  
+}
+transformed parameters{
+  vector<lower=0>[n] Cl = exp(mu_cl + z_cl[subjectids]*s_cl + beta_cl_sex*sex + beta_cl_weight*weight + beta_cl_creatinine*creatinine + beta_cl_age*age);
+  vector<lower=0>[n] t = exp(mu_tmax + z_t[subjectids]*s_t);
+  vector<lower=0, upper=1>[n] alpha = inv_logit(mu_alpha + z_alpha[subjectids]*s_alpha);
+  vector<lower=0>[n]ka = log(alpha)./(t .* (alpha-1));
+  vector<lower=0>[n] ke = alpha .* log(alpha)./(t .* (alpha-1));
+  vector<lower=0>[n] delayed_time = time - 0.5*delays[subjectids];
+   
+  vector<lower=0>[n] C = (0.5*D ./ Cl) .* (ke .* ka) ./ (ke - ka) .* (exp(-ka .* delayed_time) -exp(-ke .* delayed_time));
+}
+model{
+  mu_tmax ~ normal(log(3.3), 0.25);
+  s_t ~ gamma(10, 100);
+  z_t ~ normal(0,1);
+  
+  mu_cl ~ normal(log(3.3),0.15);
+  s_cl ~ gamma(15,100);
+  z_cl ~ normal(0,1);
+  
+  
+  mu_alpha ~ normal(0,1);
+  s_alpha ~ gamma(10, 100);
+  z_alpha ~ normal(0,1);
+  
+  
+  phi ~ beta(20,20);
+  kappa ~ beta(20,20);
+  delays ~ beta(phi/kappa, (1-phi)/kappa);
+  
+  beta_cl_sex ~ student_t(3,0,2.5);
+  beta_cl_weight ~ student_t(3,0,2.5);
+  beta_cl_creatinine ~ student_t(3,0,2.5);
+  
+  sigma ~ lognormal(log(0.1), 0.2);
+  yobs ~ lognormal(log(C), sigma);
+}
+generated quantities{
+  vector<lower=0>[n] Cl_p = exp(mu_cl + beta_cl_sex*sex + beta_cl_weight*weight + beta_cl_creatinine*creatinine + beta_cl_age*age);
+  real<lower=0> t_p = exp(mu_tmax);
+  real<lower=0> alpha_p = inv_logit(mu_alpha);
+  real<lower=0>ka_p = log(alpha_p)/(t_p * (alpha_p-1));
+  real<lower=0>ke_p = alpha_p * log(alpha_p)/(t_p * (alpha_p-1));
+  vector<lower=0>[n] delayed_time_p = time - 0.5*phi;
+   
+  vector<lower=0>[n] C_p = (0.5*D ./ Cl_p) * (ke_p * ka_p) / (ke_p - ka_p) .* (exp(-ka_p * delayed_time_p) -exp(-ke_p * delayed_time_p));
+}
+
+```
+
+```{r}
+TEST_SIZE = 100
+CHAINS = 4
+ADAPT_DELTA = 0.9
+
+# This data combines both new and old data.  See the study column for an indcator from which set the obervation occurs
+concentration_data <- read_csv("data/combined_data.csv") %>% 
+                      mutate(sex = if_else(sex == 'male', 0, 1),
+                             yobs = yobs/1000 #Convert from ng/ml to mg/L
+                             )
+
+# A dataframe for unique subjects. Will need this for scaling covars
+unique_subjects <- distinct(concentration_data, subjectids, .keep_all = T)
+                  
+
+covar_means <- unique_subjects %>% 
+               select(age, creatinine, weight) %>% 
+               summarise_all(mean) %>% 
+               as.numeric
+
+
+covar_sd <- unique_subjects %>% 
+               select(age, creatinine, weight) %>% 
+               summarise_all(sd) %>% 
+               as.numeric
+
+#Scale the covariates.  There may be a more sane way to do this, e.g. scaling  based on old data.
+concentration_data[, c('age','creatinine','weight')] <- scale(concentration_data[, c('age','creatinine','weight')], center = covar_means, scale = covar_sd)
+
+
+#reserve some subjects from the new data for test
+test_subjects<-unique_subjects %>% 
+               filter(study=='new') %>% 
+               sample_n(TEST_SIZE) %>% 
+               mutate(i = seq_along(subjectids))
+
+scaled_test_subjects<-test_subjects
+scaled_test_subjects[, c('age','creatinine','weight')] <- scale(scaled_test_subjects[, c('age','creatinine','weight')], center = covar_means, scale = covar_sd)
+
+train_subjects<- anti_join(unique_subjects, test_subjects, on = 'subjectids') %>% 
+                  mutate(i = seq_along(subjectids))
+
+model_data<-anti_join(concentration_data, test_subjects, by = 'subjectids') %>% 
+            mutate(subjectids = factor(subjectids)) %>% 
+            compose_data()
+
+fit <- model$sample(model_data, chains = CHAINS, adapt_delta = ADAPT_DELTA, parallel_chains = 4)
+draws <- as_draws_df(fit$draws())
+```
+
+```{r}
+make_rfx_grid(draws, z_cl, study)
+
+draws %>% 
+  spread_draws(C[i]) %>% 
+  mean_qi %>% 
+  bind_cols(anti_join(concentration_data, test_subjects, by = 'subjectids')) %>% 
+  ggplot(aes(yobs, C))+
+  geom_pointrange(aes(ymin = .lower, ymax = .upper),alpha = 0.25)+
+  geom_abline()
+```
+
+```{cmdstan, output.var = 'pred_model'}
+
+data{
+  int n; //Total number of observations
+  int subjectids[n]; //Subject idendification number as an integer.  Mine go from 1 - 36
+  int n_subjectids; //How many unique subjects do I have?
+  vector[n] time; //time at which subjects were observed?  Length N
+  real yobs[n]; //Observed concentraitons
+  
+  //Covars
+  vector[n] sex;
+  vector[n] weight;
+  vector[n] creatinine;
+  vector[n] age;
+  vector[n] D;
+
+
+}
+parameters{
+  
+  real<lower=0>  mu_cl;
+  
+  real<lower=0> mu_tmax;
+
+  real<lower=0, upper=1> phi;
+  
+  real<lower=0> sigma;
+  
+  real mu_alpha;
+  
+  real beta_cl_sex;
+  real beta_cl_weight;
+  real beta_cl_creatinine;
+  real beta_cl_age;
+  
+  
+}
+
+generated quantities{
+  vector<lower=0>[n] Clp = exp(mu_cl + beta_cl_sex*sex + beta_cl_weight*weight + beta_cl_creatinine*creatinine + beta_cl_age*age);
+  real<lower=0> tp = exp(mu_tmax);
+  real<lower=0> alphap = inv_logit(mu_alpha);
+  real<lower=0> kap = log(alphap)/(tp * (alphap-1));
+  real<lower=0> kep = alphap * kap;
+  vector<lower=0>[n] delayed_timep = time - 0.5*phi;
+   
+  vector<lower=0>[n] Cp = (0.5*D ./ Clp) * (kep * kap) / (kep - kap) .* (exp(-kap * delayed_timep) -exp(-kep * delayed_timep));
+}
+
+```
+
+
+```{r}
+pred_data<-scaled_test_subjects %>% 
+  mutate(subjectids = factor(subjectids)) %>% 
+  compose_data()
+
+pred_model$generate_quantities(fit, data = pred_data)
+
+```
+
