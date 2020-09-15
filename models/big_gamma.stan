@@ -10,7 +10,7 @@ data{
   int n; //Total number of observations
   int subjectids[n]; //Subject idendification number as an integer.  Mine go from 1 - 36
   int n_subjectids; //How many unique subjects do I have?
-  vector[n] time; //time at which subjects were observed?  Length N
+    vector[n] time; //time at which subjects were observed?  Length N
   real yobs[n]; //Observed concentraitons
   
   //Covars
@@ -21,7 +21,7 @@ data{
   vector[n] D;
   
   
-    //Covars
+  //Covars
   int test_n;
   vector[test_n] test_time;
   vector[test_n] test_sex;
@@ -31,6 +31,10 @@ data{
   vector[test_n] test_D;
   
   
+}
+transformed data{
+  matrix[n, 4] X = [sex', weight', creatinine', age']';
+  matrix[test_n, 4] test_X = [test_sex', test_weight', test_creatinine', test_age']';
 }
 parameters{
   
@@ -46,21 +50,20 @@ parameters{
   real<lower=0, upper=1> kappa;
   vector<lower=0, upper=1>[n_subjectids] delays;
   
-  real<lower=0> sigma;
+  real<lower=0> p;
   
   real mu_alpha;
   real<lower=0> s_alpha;
   vector[n_subjectids] z_alpha;
   
-  real beta_cl_sex;
-  real beta_cl_weight;
-  real beta_cl_creatinine;
-  real beta_cl_age;
+  vector[4] beta_cl;
+  vector[4] beta_t;
+  vector[4] beta_a;
 }
 transformed parameters{
-  vector<lower=0>[n] Cl = exp(mu_cl + z_cl[subjectids]*s_cl + beta_cl_sex*sex + beta_cl_weight*weight + beta_cl_creatinine*creatinine + beta_cl_age*age);
-  vector<lower=0>[n] t = exp(mu_tmax + z_t[subjectids]*s_t);
-  vector<lower=0, upper=1>[n] alpha = inv_logit(mu_alpha + z_alpha[subjectids]*s_alpha);
+  vector<lower=0>[n] Cl = exp(mu_cl + z_cl[subjectids]*s_cl + X*beta_cl);
+  vector<lower=0>[n] t = exp(mu_tmax + z_t[subjectids]*s_t + X*beta_t);
+  vector<lower=0, upper=1>[n] alpha = inv_logit(mu_alpha + z_alpha[subjectids]*s_alpha + X*beta_a);
   vector<lower=0>[n]ka = log(alpha)./(t .* (alpha-1));
   vector<lower=0>[n] ke = alpha .* log(alpha)./(t .* (alpha-1));
   vector<lower=0>[n] delayed_time = time - 0.5*delays[subjectids];
@@ -86,33 +89,46 @@ model{
   kappa ~ beta(20,20);
   delays ~ beta(phi/kappa, (1-phi)/kappa);
   
-  beta_cl_sex ~ student_t(3,0,2.5);
-  beta_cl_weight ~ student_t(3,0,2.5);
-  beta_cl_creatinine ~ student_t(3,0,2.5);
+  beta_cl ~ student_t(3,0,2.5);
+  beta_t ~ student_t(3,0,2.5);
+  beta_a ~ student_t(3,0,2.5);
   
-  sigma ~ lognormal(log(0.1), 0.2);
-  yobs ~ lognormal(log(C), sigma);
+  p ~ cauchy(0,1);
+  yobs ~ gamma( C .* C ./ p, C ./ p);
 }
 generated quantities{
- real z1 = normal_rng(0,1);
- vector[test_n] CL = exp(mu_cl + s_cl*z1 + beta_cl_sex*test_sex + beta_cl_weight*test_weight + beta_cl_creatinine*test_creatinine + beta_cl_age*test_age);
- 
- real z2 = normal_rng(0,1);
- real T = exp(mu_tmax + s_t*z2);
- 
- real z3 = normal_rng(0,1);
- real A = inv_logit(mu_alpha + s_alpha*z3 );
- 
- real KA = log(A)/(T * (A-1));
- real KE = A * KA;
- 
- vector[test_n] TIME = test_time - 0.5*beta_rng(phi/kappa, (1-phi)/kappa);
- 
- vector[test_n] CPRED;
- 
- for (i in 1:test_n){
-   CPRED[i] = conc_curve(test_D[i], TIME[i], CL[i], KA, KE);
- }
- 
+  real z1;
+  real z2;
+  real z3;
+  
+  vector[test_n] CL ;
+  vector[test_n] T ;
+  vector[test_n] A;
+  vector[test_n] KA ;
+  vector[test_n] KE ;
+  
+  vector[test_n] TIME = test_time - 0.5*beta_rng(phi/kappa, (1-phi)/kappa);
+  
+  vector[test_n] CPRED;
+  
+  vector[n] Cppc;
+  for (i in 1:n){
+    Cppc[i] = gamma_rng(C[i]*C[i]/p, C[i]/p);
+  }
+  
+  
+  for (i in 1:test_n){
+    z1 = normal_rng(0,1);
+    z2 = normal_rng(0,1);
+    z3 = normal_rng(0,1);
+    
+    CL[i] = exp(mu_cl + s_cl*z1 + test_X[i]*beta_cl);
+    T[i] = exp(mu_tmax + s_t*z2 + test_X[i]*beta_t);
+    A[i] = inv_logit(mu_alpha + s_alpha*z3 + test_X[i]*beta_a );
+    KA[i] = log(A[i]) / (T[i] * (A[i]-1));
+    KE[i] = A[i] * KA[i];
+    CPRED[i] = conc_curve(test_D[i], TIME[i], CL[i], KA[i], KE[i]);
+  }
+  
 }
 
