@@ -19,6 +19,7 @@ data{
   vector[n] creatinine;
   vector[n] age;
   vector[n] D;
+  vector[n] from_old;
   
   
     //Covars
@@ -29,12 +30,13 @@ data{
   vector[test_n] test_creatinine;
   vector[test_n] test_age;
   vector[test_n] test_D;
+  vector[test_n] test_from_old;
   
   
 }
 transformed data{
-  matrix[n, 4] X = [sex', weight', creatinine', age']';
-  matrix[test_n, 4] test_X = [test_sex', test_weight', test_creatinine', test_age']';
+  matrix[n, 5] X = [sex', weight', creatinine', age', from_old']';
+  matrix[test_n, 5] test_X = [test_sex', test_weight', test_creatinine', test_age', test_from_old']';
 }
 parameters{
   
@@ -56,9 +58,9 @@ parameters{
   real<lower=0> s_alpha;
   vector[n_subjectids] z_alpha;
   
-  vector[4] beta_cl;
-  vector[4] beta_t;
-  vector[4] beta_a;
+  vector[5] beta_cl;
+  vector[5] beta_t;
+  vector[5] beta_a;
 }
 transformed parameters{
   vector<lower=0>[n] Cl = exp(mu_cl + z_cl[subjectids]*s_cl + X*beta_cl);
@@ -80,7 +82,7 @@ model{
   z_cl ~ normal(0,1);
   
   
-  mu_alpha ~ normal(0,1);
+  mu_alpha ~ normal(-0.25,0.5);
   s_alpha ~ gamma(10, 100);
   z_alpha ~ normal(0,1);
   
@@ -92,6 +94,7 @@ model{
   beta_cl ~ normal(0,0.25);
   beta_t ~ normal(0, 0.25);
   beta_a ~ normal(0, 0.25);
+  
   
   sigma ~ lognormal(log(0.1), 0.2);
   yobs ~ lognormal(log(C), sigma);

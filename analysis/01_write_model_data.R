@@ -14,8 +14,10 @@ TEST_SIZE = 100
 concentration_data <- read_csv("data/combined_data.csv") %>% 
   mutate(
     sex = if_else(sex == 'male', 0, 1),
-    yobs = yobs/1000 #Convert from ng/ml to mg/L
-  )
+    yobs = yobs/1000, #Convert from ng/ml to mg/L
+    study = if_else(study=='old',0,1)
+  ) %>% 
+  rename(from_old = study)
 
 # A dataframe for unique subjects. 
 # Patients from the old data appear multiple times.
@@ -43,7 +45,7 @@ concentration_data[, c('age','creatinine','weight')] <- scale(concentration_data
 # Reserve some subjects from the new data for test.
 # Sample only the new data for hold out.
 test_subjects<-unique_subjects %>% 
-                filter(study=='new') %>% 
+                filter(from_old==1) %>% 
                 sample_n(TEST_SIZE) %>% 
                 mutate(i = seq_along(subjectids))
 
@@ -63,7 +65,7 @@ scaled_test_subjects[, c('age','creatinine','weight')] <- scale(scaled_test_subj
 colnames(scaled_test_subjects) <- str_c('test_', colnames(scaled_test_subjects))
 
 pred_data<-compose_data(scaled_test_subjects)
-names(pred_data)[12]<-'test_n'
+names(pred_data)[11]<-'test_n'
 
 train_subjects<-anti_join(concentration_data, test_subjects, by = 'subjectids') %>% 
   mutate(subjectids = factor(subjectids))

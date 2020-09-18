@@ -25,34 +25,6 @@ library(lme4)
 
 theme_set(theme_classic())
 
-
-CHAINS = 12
-ITERS = 10000
-ADAPT_DELTA = 0.8
-SEED = 19920908
-set.seed(SEED)
-
-#Helpler functions
-make_rfx_plot<-function(draws, x, y, color){
-  color_var = enquo(color)
-  var_y = enquo(y)
-  var_x = enquo(x)
-  draws %>% 
-  spread_draws((!!var_y)[i]) %>% 
-  mean_qi %>% 
-  left_join(train_subjects) %>% 
-  ggplot(aes(!!var_x, !!var_y))+
-  geom_point(aes(color = !!color_var))
-  
-} 
-
-make_rfx_grid<-function(draws, y, color){
-  a = make_rfx_plot(draws, weight, !!enquo(y), !!enquo(color))
-  b = make_rfx_plot(draws, age, !!enquo(y), !!enquo(color))
-  d = make_rfx_plot(draws, creatinine, !!enquo(y), !!enquo(color))
-  
-  (a + b + d  + plot_layout(nrow = 2, ncol = 2))
-}
 ```
 
 
@@ -94,8 +66,7 @@ combined_data<-readRDS('fit_data/combined_Data.RDS')
 model = cmdstan_model(stan_file = 'models/big_model.stan')
 fit <- model$sample(combined_data, 
                     chains = CHAINS, 
-                    seed = SEED, 
-                    adapt_delta = ADAPT_DELTA,
+                    seed = SEED,
                     parallel_chains = 4
                     )
 ```
@@ -120,7 +91,7 @@ Metrics::rmse(predictions$CPRED, predictions$yobs)
 
 
 ```{r}
-training<-read_csv("fit_data/train_subjects.csv") %>% filter(study=='new')
+training<-read_csv("fit_data/train_subjects.csv") %>% filter(from_old==1)
 val<-read_csv("fit_data/test_subjects.csv")
 
 linmod <- lm(log(yobs) ~ time + sex + age + weight + creatinine + D , data = training)
@@ -135,24 +106,19 @@ Metrics::rmse(lm_predictions, val$yobs)
 
 
 ```{r}
+subs<-tibble(
+  subjects = combined_data$subjectids,
+  times = combined_data$time,
+) %>% 
+  mutate(i = seq_along(times)) %>% 
+  filter(subjects<=36)
+
 draws %>% 
-  select(contains('mu_')) %>% 
-  mutate(
-    tmax = exp(mu_tmax),
-    cl = exp(mu_cl),
-    alpha = plogis(mu_alpha)
-  ) %>% 
-  select(tmax, cl, alpha) %>% 
-  ggplot(aes(tmax, alpha))+
-  geom_point()
+  spread_draws(C[i], n = 250) %>% 
+  right_join(subs) %>% 
+  ggplot(aes(times, C, group = .draw))+
+  geom_line(alpha = 0.1)+
+  facet_wrap(~subjects)
 ```
 
-```{r}
-fit$draws('beta_cl') %>% 
-  as_draws_df() %>% 
-  gather_draws(beta_cl[i], n = 2000) %>% 
-  ggplot(aes(.value))+
-  geom_histogram()+
-  facet_wrap(~i)
-```
 
