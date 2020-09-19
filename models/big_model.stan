@@ -19,7 +19,7 @@ data{
   vector[n] creatinine;
   vector[n] age;
   vector[n] D;
-  vector[n] from_old;
+  vector[n] from_new;
   
   
     //Covars
@@ -30,13 +30,13 @@ data{
   vector[test_n] test_creatinine;
   vector[test_n] test_age;
   vector[test_n] test_D;
-  vector[test_n] test_from_old;
+  vector[test_n] test_from_new;
   
   
 }
 transformed data{
-  matrix[n, 5] X = [sex', weight', creatinine', age', from_old']';
-  matrix[test_n, 5] test_X = [test_sex', test_weight', test_creatinine', test_age', test_from_old']';
+  matrix[n, 5] X = [sex', weight', creatinine', age', from_new']';
+  matrix[test_n, 5] test_X = [test_sex', test_weight', test_creatinine', test_age', test_from_new']';
 }
 parameters{
   
