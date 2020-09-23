@@ -68,8 +68,9 @@ transformed parameters{
   vector<lower=0>[n] C = (0.5*D ./ Cl) .* (ke .* ka) ./ (ke - ka) .* (exp(-ka .* delayed_time) -exp(-ke .* delayed_time));
 }
 model{
-  mu_tmax ~ normal(log(3.3), 0.25);
-  s_t ~ gamma(10, 100);
+  //See Byon et. al 2019
+  mu_tmax ~ normal(log(3.3), 0.1);
+  s_t ~ gamma(5, 100);
   z_t ~ normal(0,1);
   
   mu_cl ~ normal(log(3.3),0.15);
