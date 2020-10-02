@@ -104,5 +104,5 @@ linmod_fit_and_predict<-function(splits){
   
   error = rmse(lm_predictions, val$yobs)
   
-  return(NA)
+  return(error)
 }

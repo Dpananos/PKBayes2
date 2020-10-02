@@ -22,7 +22,7 @@ library(tidyverse)
 library(patchwork)
 library(table1)
 library(lme4)
-
+library(here)
 theme_set(theme_classic())
 
 ```
@@ -34,10 +34,6 @@ Shown in table 1 is a comparison of the new (i.e. from the clinic) and old (i.e.
 
 The old data contains 36 patients, each sampled multiple times.  Each patient was observed at the same time post dose, allowing us to estimate a reasonably complex model.  Each patient in the new data is observed at a different time, and is observed at most once.
 
-```{r}
-concentration_data<-read_csv('data/combined_data.csv')
-table1(~ sex + age + weight + creatinine | study, data=distinct(concentration_data, subjectids, .keep_all = T))
-```
 
 # The Model
 
@@ -62,8 +58,10 @@ $$ \beta \sim \operatorname{Student-T}(0, \nu=3)  $$
 
 We do not estimate the initial condition and assume that $y(0) = 0$. We make predictions for out of sample patients by integrating out the random effect and then taking expectations.  Note here that covariates only affect the clearance rate.  This can easily be extended so that covariates also affect average time to max concentration, or non-dimensional parameter $\alpha$.
 ```{r}
-combined_data<-readRDS('fit_data/combined_Data.RDS')
-model = cmdstan_model(stan_file = 'models/big_model.stan')
+CHAINS = 4
+SEED = 19920909
+combined_data<- readRDS('../fit_data/combined_Data.RDS')
+model = cmdstan_model(stan_file = '../models/big_model.stan')
 fit <- model$sample(combined_data, 
                     chains = CHAINS, 
                     seed = SEED,
@@ -91,8 +89,8 @@ Metrics::rmse(predictions$CPRED, predictions$yobs)
 
 
 ```{r}
-training<-read_csv("fit_data/train_subjects.csv") %>% filter(from_old==1)
-val<-read_csv("fit_data/test_subjects.csv")
+training<-read_csv("../fit_data/train_subjects.csv") %>% filter(from_new==1)
+val<-read_csv("../fit_data/test_subjects.csv")
 
 linmod <- lm(log(yobs) ~ time + sex + age + weight + creatinine + D , data = training)
 
@@ -109,6 +107,7 @@ Metrics::rmse(lm_predictions, val$yobs)
 subs<-tibble(
   subjects = combined_data$subjectids,
   times = combined_data$time,
+  y_obs = combined_data$yobs
 ) %>% 
   mutate(i = seq_along(times)) %>% 
   filter(subjects<=36)
@@ -116,9 +115,10 @@ subs<-tibble(
 draws %>% 
   spread_draws(C[i], n = 250) %>% 
   right_join(subs) %>% 
-  ggplot(aes(times, C, group = .draw))+
-  geom_line(alpha = 0.1)+
-  facet_wrap(~subjects)
+  ggplot()+
+  geom_line(aes(times, C, group = .draw),alpha = 0.1)+
+  geom_point(aes(times, y_obs), color = 'red')+
+  facet_wrap(~subjects, scales = 'free_y')
 ```
 
 

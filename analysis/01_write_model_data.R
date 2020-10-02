@@ -17,7 +17,7 @@ concentration_data <- read_csv("data/combined_data.csv") %>%
     yobs = yobs/1000, #Convert from ng/ml to mg/L
     study = if_else(study=='old',0,1)
   ) %>% 
-  rename(from_old = study)
+  rename(from_new = study)
 
 # A dataframe for unique subjects. 
 # Patients from the old data appear multiple times.
@@ -45,7 +45,7 @@ concentration_data[, c('age','creatinine','weight')] <- scale(concentration_data
 # Reserve some subjects from the new data for test.
 # Sample only the new data for hold out.
 test_subjects<-unique_subjects %>% 
-                filter(from_old==1) %>% 
+                filter(from_new==1) %>% 
                 sample_n(TEST_SIZE) %>% 
                 mutate(i = seq_along(subjectids))
 

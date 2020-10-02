@@ -115,6 +115,7 @@ generated quantities{
  
  vector[test_n] CPRED;
  
+ 
  for (i in 1:test_n){
    z1 = normal_rng(0,1);
    z2 = normal_rng(0,1);
