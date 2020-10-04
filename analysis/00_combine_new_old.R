@@ -1,6 +1,11 @@
 library(tidyverse)
 library(here)
 
+# This script combines rommel's old data with the new data from the clinic.
+# I use the result of this script in future model fits (e.g validating OOS model prediction capabilities)
+# I only use the sex, age, weight, creatinine variables from each data set.  I also include the dose (to be passed to models)
+# as well as an indicator for which study the observation came from.  I use a fixed effect for study in the models.
+
 
 old<-read_csv('data/rommels_apixiban_data.csv')  %>% 
   transmute(

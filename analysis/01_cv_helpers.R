@@ -5,6 +5,11 @@ library(tidymodels)
 library(posterior)
 library(Metrics)
 
+# This script creates some tools I use to measure out of sample performance.
+# My strategy is to use repeated CV from the {rsample} library
+# The functions below resample the new subejcts into test and train, then append the old subjects 
+# To the training data.  We need the old subjects in their entirety so we can estimate the within subject variance.
+
 # load in the data from step 00.
 # Will have a fixed effect for study so convert it to a numeric.
 # Rescale concentrations to be mg/L since priors are on L scale and Drug amount is on mg
@@ -69,7 +74,7 @@ bayes_fit_and_predict<-function(splits, filename){
   
   # Combine the training and test set to pass to Stan.  Fir the model, extract predictions, compute OOS error.
   combined_data<-c(training_data_list, testing_data_list)
-  model<- cmdstan_model(stan_file = 'models/big_model.stan')
+  model<- cmdstan_model(stan_file = 'models/model_for_repeated_cv.stan')
   fit <- model$sample(combined_data, chains = 4, parallel_chains = 4) 
   
   # Only extract CPRED.  Can speed things up a little.

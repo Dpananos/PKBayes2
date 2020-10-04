@@ -6,7 +6,7 @@ functions{
     
     for(i in 1:n_doses){
       if(t>dose_times[i]){
-        dydt[1] = dydt[1] + doses[i] * ke * ka * exp( -ka * (t-dose_times[i]) ) / Cl;
+        dydt[1] = dydt[1] + 0.5*doses[i] * ke * ka * exp( -ka * (t-dose_times[i]) ) / Cl;
       }
     }
     
@@ -40,13 +40,12 @@ data{
   real t_pred[n_pred];
   vector[n_doses] doses;
   vector[n_doses] dose_times;
-  
-  
-
-  
 }
 transformed data{
-  matrix[n, 5] X = [sex', weight', creatinine', age', from_new']';
+  vector[n_subjectids] scaled_weight = (weight - mean(weight))/sd(weight);
+  vector[n_subjectids] scaled_age = (age - mean(age))/sd(age);
+  vector[n_subjectids] scaled_creatinine = (creatinine - mean(creatinine))/sd(creatinine);
+  matrix[n_subjectids, 5] X = [sex', scaled_weight', scaled_creatinine', scaled_age', from_new']';
   real t0 = 0;
   vector[1] y0 = [0]';
 }
@@ -112,19 +111,18 @@ model{
   sigma ~ lognormal(log(0.1), 0.2);
   yobs ~ lognormal(log(C), sigma);
 }
-generated quantities{
-  
-  matrix[n_subjectids, n_pred] C_repeat;
-  matrix[n_subjectids, n_pred] C_repeat_ppc;
-  
-  real trough_conc = 1000*concentration(12, Cl[1], ke[1], ka[1]);
-  real max_conc = 1000*concentration(tmax[1], Cl[1], ke[1], ka[1]);
-  
-  for(i in 1:n_subjectids){
-    C_repeat[i,] = to_row_vector(ode_rk45(pk_ode, y0, t0, t_pred, Cl[i], ke[i], ka[i],  n_doses, doses,  dose_times )[,1]);
-    C_repeat_ppc[i,] = to_row_vector(lognormal_rng( log(C_repeat[i,]), sigma ));
-  }
-  
-  
-}
-
+// generated quantities{
+//   
+//   matrix[n_subjectids, n_pred] C_repeat;
+//   matrix[n_subjectids, n_pred] C_repeat_ppc;
+//   
+//   for(i in 1:n_subjectids){
+//     C_repeat[i,] = to_row_vector(ode_rk45(pk_ode, y0, t0, t_pred, Cl[i], ke[i], ka[i],  n_doses, doses,  dose_times )[,1]);
+//     C_repeat_ppc[i,] = to_row_vector(lognormal_rng( log(C_repeat[i,]), sigma ));  
+//   }
+//   
+//   
+//   
+//   
+// }
+// 

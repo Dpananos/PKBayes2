@@ -1,6 +1,6 @@
 library(tidyverse)
 library(tidymodels)
-source('analysis/02_prepare_data.R')
+source('analysis/01_cv_helpers.R')
 `%notin%` <- Negate(`%in%`)
 
 #Get the folds I've already done up to this point
@@ -36,6 +36,5 @@ folds %>%
   mutate(linmod_error = map_dbl(splits, linmod_fit_and_predict)) %>% 
   group_by(id) %>% 
   summarise(bayes = mean(error), linmod = mean(linmod_error)) %>% 
-  mutate(delta = linmod - bayes) %>% 
-  summarise(mean(1000*delta))
+  mutate(delta = linmod - bayes)
   
