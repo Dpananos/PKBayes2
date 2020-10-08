@@ -27,14 +27,8 @@ data{
   
 }
 transformed data{
-  matrix[n_subjects, 5] X_scaled;
   real t0 = 0;
   vector[1] y0 = [0]';
-  
-  
-  for(i in 1:5){
-    X_scaled[,i] = ( X[,i] - mean(X[,i]) )/sd(X[,i]);
-  }
 }
 generated quantities{
   

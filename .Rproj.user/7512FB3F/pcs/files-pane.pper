@@ -1,13 +1,9 @@
 {
-    "path" : "~/Documents/PhD Code/PKBayes2/analysis",
-    "sortOrder" : [
+    "path": "~/Documents/PhD Code/PKBayes2",
+    "sortOrder": [
         {
-            "ascending" : true,
-            "columnIndex" : 2
-        },
-        {
-            "ascending" : false,
-            "columnIndex" : 3
+            "columnIndex": 2,
+            "ascending": true
         }
     ]
 }
